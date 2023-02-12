@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model folders {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique(map: "uuid") @db.VarChar(255)
+  name      String   @unique(map: "name") @db.VarChar(255)
+  is_active String   @default("1") @db.Char(1)
+  labels    labels[]
+}
+
+model labels {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique(map: "uuid") @db.VarChar(255)
+  folder_id Int?
+  en        String?  @db.Text
+  ru        String?  @db.Text
+  ch        String?  @db.Text
+  is_active String   @default("1") @db.Char(1)
+  folders   folders? @relation(fields: [folder_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "labels_ibfk_1")
+
+  @@index([folder_id], map: "folder_id")
+}
+
+model users {
+  id        Int    @id @default(autoincrement())
+  uuid      String @unique(map: "uuid") @db.VarChar(255)
+  username  String @unique(map: "username") @db.VarChar(255)
+  password  String @db.VarChar(2000)
+  is_active String @default("1") @db.Char(1)
+}
