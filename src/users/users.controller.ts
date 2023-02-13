@@ -19,9 +19,9 @@ export class UsersController {
   ) {}
 
   @Post('register')
-  async registerUser(@Body() body: UserDto, @Res() response: Response) {
+  async registerUser(@Res() response: Response, @Body() body: UserDto) {
     const user = await this.userService.register(body)
-    return this.appService.okResponse(response, user.uuid)
+    return this.appService.okUserCreated(response, user.uuid)
   }
 
   @Post('auth')

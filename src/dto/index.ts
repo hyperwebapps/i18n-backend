@@ -1,5 +1,6 @@
 export class ResponseDto {
-  id: string
+  id?: string
   code: number
   message: string
+  token?: string
 }

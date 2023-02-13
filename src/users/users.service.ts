@@ -1,19 +1,18 @@
 import { Injectable } from '@nestjs/common'
-import { users } from '@prisma/client'
+import { User } from '@prisma/client'
 import * as argon2 from 'argon2'
-import { randomUUID } from 'crypto'
-import { PrismaService } from 'src/prisma.service'
+import { PrismaService } from 'src/prisma/prisma.service'
 import { UserDto } from './dto'
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async register(body: UserDto): Promise<users> {
+  async register(body: UserDto): Promise<User> {
     try {
       const hash = await argon2.hash(body.password)
-      return await this.prisma.users.create({
-        data: { ...body, password: hash, uuid: randomUUID() },
+      return await this.prisma.user.create({
+        data: { ...body, password: hash },
       })
     } catch (error) {
       throw new Error(error.message)
@@ -22,7 +21,7 @@ export class UsersService {
 
   async authenticate(body: UserDto): Promise<string> {
     try {
-      const user = await this.prisma.users.findUniqueOrThrow({
+      const user = await this.prisma.user.findUniqueOrThrow({
         where: {
           username: body.username,
         },

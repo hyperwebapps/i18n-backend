@@ -1,6 +1,6 @@
 {
   "name": "i18n-backend",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "i18n rest api",
   "author": "VinceCommerce",
   "private": true,
@@ -20,11 +20,13 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "psm:init": "npx prisma init",
     "psm:pull": "npx prisma db pull",
-    "psm:generate": "npx prisma generate"
+    "psm:generate": "npx prisma generate",
+    "nest:generate": "nest g mo --no-spec && nest g s --no-spec && nest g co --no-spec"
   },
   "dependencies": {
     "@nestjs/common": "^9.3.8",
     "@nestjs/core": "^9.0.0",
+    "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^9.0.0",
     "@prisma/client": "^4.10.1",
     "argon2": "^0.30.3",
