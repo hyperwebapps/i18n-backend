@@ -7,74 +7,86 @@ import { CreateLabelDto, UpdateLabelDto } from './dto'
 export class LabelsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(body: CreateLabelDto): Promise<Label> {
-    try {
-      const folder = await this.prisma.folder.findUnique({
-        where: {
-          uuid: body.folder,
-        },
-      })
-
-      delete body.folder
-
-      const label = await this.prisma.label.create({
-        data: {
-          ...body,
-          folders: {
-            connect: {
-              uuid: folder.uuid,
-            },
+  async create(body: CreateLabelDto, folderId: string): Promise<Label> {
+    delete body.folder
+    const label = await this.prisma.label.create({
+      data: {
+        ...body,
+        folders: {
+          connect: {
+            uuid: folderId,
           },
         },
-      })
-
-      return label
-    } catch (error) {}
+      },
+    })
+    return label
   }
 
   async findAllLabels(): Promise<Label[]> {
-    try {
-      const labels = await this.prisma.label.findMany({
-        where: {
-          is_active: true,
-        },
-      })
-      return labels
-    } catch (error) {}
+    const labels = await this.prisma.label.findMany({
+      where: {
+        is_active: true,
+      },
+    })
+    return labels
   }
 
   async findLabel(id: string): Promise<Label> {
-    try {
-      const label = await this.prisma.label.findUnique({
-        where: {
+    const label = await this.prisma.label.findUnique({
+      where: {
+        isActiveByUuid: {
           uuid: id,
+          is_active: true,
         },
-      })
-      return label
-    } catch (error) {}
+      },
+    })
+    return label
+  }
+
+  async findLabelByName(name: string): Promise<Label> {
+    const label = await this.prisma.label.findUnique({
+      where: {
+        name: name,
+      },
+    })
+    return label
+  }
+
+  async findActiveLabelByName(name: string): Promise<Label> {
+    const label = await this.prisma.label.findUnique({
+      where: {
+        isActiveByName: {
+          name: name,
+          is_active: true,
+        },
+      },
+    })
+    return label
   }
 
   async update(id: string, body: UpdateLabelDto): Promise<void> {
-    try {
-      await this.prisma.label.update({
-        where: {
+    const label = await this.prisma.label.update({
+      where: {
+        isActiveByUuid: {
           uuid: id,
+          is_active: true,
         },
-        data: body,
-      })
-    } catch (error) {}
+      },
+      data: body,
+    })
   }
 
   async delete(id: string): Promise<void> {
-    try {
-      await this.prisma.label.update({
-        where: {
+    await this.prisma.label.update({
+      where: {
+        isActiveByUuid: {
           uuid: id,
+          is_active: true,
         },
-        data: {
-          is_active: false,
-        },
-      })
-    } catch (error) {}
+      },
+      data: {
+        is_active: false,
+      },
+    })
   }
 }

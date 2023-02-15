@@ -1,3 +1,5 @@
+import { Exclude, Expose } from 'class-transformer'
+
 export class CreateLabelDto {
   name: string
   en: string
@@ -11,4 +13,14 @@ export class UpdateLabelDto {
   en: string
   ru: string
   ch: string
+}
+
+@Expose()
+export class LabelDto {
+  @Expose({ name: 'uuid' })
+  id: string
+  @Expose({ name: 'folder_id' })
+  folder: number
+  @Exclude()
+  is_active: boolean
 }

@@ -13,6 +13,9 @@ model Folder {
   name      String   @unique(map: "name") @db.VarChar(255)
   is_active Boolean  @default(true)
   labels    Label[]
+  
+  @@unique(fields: [uuid, is_active], name: "isActiveByUuid")
+  @@unique(fields: [name, is_active], name: "isActiveByName")
 }
 
 model Label {
@@ -27,6 +30,8 @@ model Label {
   folders   Folder? @relation(fields: [folder_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "labels_ibfk_1")
 
   @@index([folder_id], map: "folder_id")
+  @@unique(fields: [uuid, is_active], name: "isActiveByUuid")
+  @@unique(fields: [name, is_active], name: "isActiveByName")
 }
 
 model User {
