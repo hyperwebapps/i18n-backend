@@ -8,16 +8,19 @@ import {
   Put,
   Res,
 } from '@nestjs/common'
+import { ApiResponse } from '@nestjs/swagger'
+import { ApiBearerAuth } from '@nestjs/swagger/dist'
 import { plainToInstance } from 'class-transformer'
 import { Response } from 'express'
-import { AppService } from 'src/app.service'
+import { AppService } from '../app.service'
 import {
   FolderAlreadyPresentException,
   FolderNotFoundException,
-} from 'src/exception'
+} from '../exception'
 import { CreateFolderDto, FolderDto, UpdateFolderDto } from './dto'
 import { FoldersService } from './folders.service'
 
+@ApiBearerAuth()
 @Controller({
   path: 'folders',
   version: '1',
@@ -29,6 +32,10 @@ export class FoldersController {
   ) {}
 
   @Post()
+  @ApiResponse({
+    status: 200,
+    description: 'The folder has been successfully created.',
+  })
   async create(@Res() response: Response, @Body() body: CreateFolderDto) {
     const folderCheck = await this.foldersService.findFolderByName(body.name)
     if (folderCheck) throw new FolderAlreadyPresentException()

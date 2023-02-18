@@ -4,6 +4,7 @@ import {
   Res,
 } from '@nestjs/common/decorators/http/route-params.decorator'
 import { JwtService } from '@nestjs/jwt'
+import { ApiResponse } from '@nestjs/swagger'
 import * as argon2 from 'argon2'
 import { Response } from 'express'
 import { AppService } from 'src/app.service'
@@ -28,6 +29,10 @@ export class UsersController {
 
   @Post('register')
   @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'The user has been successfully created.',
+  })
   async registerUser(@Res() response: Response, @Body() body: UserDto) {
     const user = await this.userService.createUser(body)
     return this.appService.okUserCreated(response, user.uuid)
@@ -35,6 +40,10 @@ export class UsersController {
 
   @Post('login')
   @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'The user has been successfully authenticated.',
+  })
   async authenticateUser(@Res() response: Response, @Body() body: UserDto) {
     const user = await this.userService.findUser(body.username)
     if (!user) throw new UserNotFoundException()

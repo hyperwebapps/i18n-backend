@@ -1,5 +1,6 @@
 import { Controller, Post } from '@nestjs/common'
 import { Body, Delete, Get, Param, Put, Res } from '@nestjs/common/decorators'
+import { ApiBearerAuth } from '@nestjs/swagger'
 import { plainToInstance } from 'class-transformer'
 import { Response } from 'express'
 import { AppService } from '../app.service'
@@ -12,6 +13,7 @@ import { FoldersService } from '../folders/folders.service'
 import { CreateLabelDto, LabelDto, UpdateLabelDto } from './dto'
 import { LabelsService } from './labels.service'
 
+@ApiBearerAuth()
 @Controller({
   path: 'labels',
   version: '1',

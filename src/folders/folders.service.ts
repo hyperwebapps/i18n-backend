@@ -24,15 +24,29 @@ export class FoldersService {
     return folders
   }
 
-  async findFolder(id: string): Promise<Folder> {
-    const folder = await this.prisma.folder.findUnique({
-      where: {
-        isActiveByUuid: {
-          uuid: id,
-          is_active: true,
+  async findFolder(id: number | string): Promise<Folder> {
+    let folder = null
+    if (typeof id === 'number') {
+      folder = await this.prisma.folder.findUnique({
+        where: {
+          isActiveById: {
+            id: id,
+            is_active: true,
+          },
         },
-      },
-    })
+      })
+    }
+
+    if (typeof id === 'string') {
+      folder = await this.prisma.folder.findUnique({
+        where: {
+          isActiveByUuid: {
+            uuid: id,
+            is_active: true,
+          },
+        },
+      })
+    }
 
     return folder
   }
