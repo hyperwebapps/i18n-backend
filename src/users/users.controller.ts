@@ -12,6 +12,7 @@ import {
   UserNotFoundException,
 } from 'src/exception'
 import { UserDto } from './dto'
+import { Public } from './jwt/public.decorator'
 import { UsersService } from './users.service'
 
 @Controller({
@@ -26,12 +27,14 @@ export class UsersController {
   ) {}
 
   @Post('register')
+  @Public()
   async registerUser(@Res() response: Response, @Body() body: UserDto) {
     const user = await this.userService.createUser(body)
     return this.appService.okUserCreated(response, user.uuid)
   }
 
   @Post('login')
+  @Public()
   async authenticateUser(@Res() response: Response, @Body() body: UserDto) {
     const user = await this.userService.findUser(body.username)
     if (!user) throw new UserNotFoundException()

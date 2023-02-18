@@ -1,6 +1,6 @@
 {
   "name": "i18n-backend",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "i18n rest api",
   "author": "VinceCommerce",
   "private": true,
@@ -17,7 +17,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e": "jest --config jest-e2e.json",
     "psm:init": "npx prisma init",
     "psm:pull": "npx prisma db pull",
     "psm:generate": "npx prisma generate",

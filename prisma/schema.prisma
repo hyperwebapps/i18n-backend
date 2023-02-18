@@ -16,6 +16,7 @@ model Folder {
   
   @@unique(fields: [uuid, is_active], name: "isActiveByUuid")
   @@unique(fields: [name, is_active], name: "isActiveByName")
+  @@unique(fields: [id, is_active], name: "isActiveById")
 }
 
 model Label {
@@ -32,6 +33,7 @@ model Label {
   @@index([folder_id], map: "folder_id")
   @@unique(fields: [uuid, is_active], name: "isActiveByUuid")
   @@unique(fields: [name, is_active], name: "isActiveByName")
+  @@unique(fields: [id, is_active], name: "isActiveById")
 }
 
 model User {

@@ -1,23 +1,14 @@
 import { Controller, Post } from '@nestjs/common'
-import {
-  Body,
-  Delete,
-  Get,
-  Param,
-  Put,
-  Res,
-  UseGuards,
-} from '@nestjs/common/decorators'
+import { Body, Delete, Get, Param, Put, Res } from '@nestjs/common/decorators'
 import { plainToInstance } from 'class-transformer'
 import { Response } from 'express'
-import { AppService } from 'src/app.service'
+import { AppService } from '../app.service'
 import {
   FolderNotFoundException,
   LabelAlreadyPresentException,
   LabelNotFoundException,
-} from 'src/exception'
-import { FoldersService } from 'src/folders/folders.service'
-import { JwtAuthGuard } from 'src/users/jwt/jwt-auth.guard'
+} from '../exception'
+import { FoldersService } from '../folders/folders.service'
 import { CreateLabelDto, LabelDto, UpdateLabelDto } from './dto'
 import { LabelsService } from './labels.service'
 
@@ -25,7 +16,6 @@ import { LabelsService } from './labels.service'
   path: 'labels',
   version: '1',
 })
-@UseGuards(JwtAuthGuard)
 export class LabelsController {
   constructor(
     private labelsService: LabelsService,
@@ -41,7 +31,7 @@ export class LabelsController {
     const labelCheck = await this.labelsService.findLabelByName(body.name)
     if (labelCheck) throw new LabelAlreadyPresentException()
 
-    const label = await this.labelsService.create(body, folder.uuid)
+    const label = await this.labelsService.create(body, folder.id)
     return this.appService.okLabelCreated(response, label.uuid)
   }
 

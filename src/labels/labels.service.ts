@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common'
 import { Label } from '@prisma/client'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../prisma/prisma.service'
 import { CreateLabelDto, UpdateLabelDto } from './dto'
 
 @Injectable()
 export class LabelsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(body: CreateLabelDto, folderId: string): Promise<Label> {
+  async create(body: CreateLabelDto, folderId: number): Promise<Label> {
     delete body.folder
     const label = await this.prisma.label.create({
       data: {
         ...body,
         folders: {
           connect: {
-            uuid: folderId,
+            id: folderId,
           },
         },
       },

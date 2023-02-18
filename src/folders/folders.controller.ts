@@ -7,7 +7,6 @@ import {
   Post,
   Put,
   Res,
-  UseGuards,
 } from '@nestjs/common'
 import { plainToInstance } from 'class-transformer'
 import { Response } from 'express'
@@ -16,7 +15,6 @@ import {
   FolderAlreadyPresentException,
   FolderNotFoundException,
 } from 'src/exception'
-import { JwtAuthGuard } from 'src/users/jwt/jwt-auth.guard'
 import { CreateFolderDto, FolderDto, UpdateFolderDto } from './dto'
 import { FoldersService } from './folders.service'
 
@@ -24,7 +22,6 @@ import { FoldersService } from './folders.service'
   path: 'folders',
   version: '1',
 })
-@UseGuards(JwtAuthGuard)
 export class FoldersController {
   constructor(
     private readonly foldersService: FoldersService,
