@@ -1,5 +1,6 @@
 import {
   Body,
+  ConsoleLogger,
   Controller,
   Delete,
   Get,
@@ -28,7 +29,8 @@ import { FoldersService } from './folders.service'
 export class FoldersController {
   constructor(
     private readonly foldersService: FoldersService,
-    private appService: AppService
+    private appService: AppService,
+    private logger: ConsoleLogger
   ) {}
 
   @Post()
@@ -38,7 +40,10 @@ export class FoldersController {
   })
   async create(@Res() response: Response, @Body() body: CreateFolderDto) {
     const folderCheck = await this.foldersService.findFolderByName(body.name)
-    if (folderCheck) throw new FolderAlreadyPresentException()
+    if (folderCheck) {
+      this.logger.warn('Folder already present')
+      throw new FolderAlreadyPresentException()
+    }
 
     const folder = await this.foldersService.create(body)
     return this.appService.okFolderCreated(response, folder.uuid)
@@ -57,7 +62,10 @@ export class FoldersController {
   async findFolder(@Param('id') id: string) {
     const folder = await this.foldersService.findFolder(id)
 
-    if (!folder) throw new FolderNotFoundException()
+    if (!folder) {
+      this.logger.warn('Folder not found')
+      throw new FolderNotFoundException()
+    }
 
     const mappedFolder = plainToInstance(FolderDto, folder)
 
@@ -71,12 +79,18 @@ export class FoldersController {
     @Body() body: UpdateFolderDto
   ) {
     const folderExists = await this.foldersService.findFolder(id)
-    if (!folderExists) throw new FolderNotFoundException()
+    if (!folderExists) {
+      this.logger.warn('Folder not found')
+      throw new FolderNotFoundException()
+    }
 
     const folderNameCheck = await this.foldersService.findFolderByName(
       body.name
     )
-    if (folderNameCheck) throw new FolderAlreadyPresentException()
+    if (folderNameCheck) {
+      this.logger.warn('Folder already present')
+      throw new FolderAlreadyPresentException()
+    }
 
     await this.foldersService.update(id, body)
 
@@ -86,7 +100,10 @@ export class FoldersController {
   @Delete(':id')
   async delete(@Res() response: Response, @Param('id') id: string) {
     const folderCheck = await this.foldersService.findFolder(id)
-    if (!folderCheck) throw new FolderNotFoundException()
+    if (!folderCheck) {
+      this.logger.warn('Folder not found')
+      throw new FolderNotFoundException()
+    }
 
     await this.foldersService.delete(id)
     return this.appService.okFolderDeleted(response, id)

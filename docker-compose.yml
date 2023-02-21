@@ -1,28 +1,36 @@
-services:
-  i18n:
-    image: node:18-alpine
-    command: sh -c "npm install && npm run start"
-    ports:
-      - 3000:3000
-    working_dir: /app
-    volumes:
-      - ./dist:/app/dist
-    environment:
-      PORT: 3000
-      DB_USER: root
-      DB_PASSWORD: password
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_SCHEMA: i18n
-      DATABASE_URL: 'mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_SCHEMA}?schema=public'
-      JWT_SECRET: MTxZGet65NgK1c1dj26LYO5OQVX6BPwK
+version: '3.8'
 
+services:
   mysql:
     image: mysql:8.0
+    ports:
+      - 3306:3306
+    networks:
+      - backend
+    command: '--default-authentication-plugin=mysql_native_password'
     volumes:
       - todo-mysql-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: i18n
+
+  i18n:
+    image: i18n:latest
+    ports:
+      - 3000:3000
+    networks:
+      - backend
+    depends_on:
+      - mysql
+    build:
+      dockerfile: Dockerfile
+      args:
+        PORT: 3000
+        DATABASE_URL: 'mysql://root:password@mysql:3306/i18n?schema=public'
+        JWT_SECRET: 'MTxZGet65NgK1c1dj26LYO5OQVX6BPwK'
+
 volumes:
   todo-mysql-data:
+
+networks:
+  backend:

@@ -3,6 +3,7 @@ import {
   Body,
   Res,
 } from '@nestjs/common/decorators/http/route-params.decorator'
+import { ConsoleLogger } from '@nestjs/common/services'
 import { JwtService } from '@nestjs/jwt'
 import { ApiResponse } from '@nestjs/swagger'
 import * as argon2 from 'argon2'
@@ -24,7 +25,8 @@ export class UsersController {
   constructor(
     private appService: AppService,
     private userService: UsersService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private logger: ConsoleLogger
   ) {}
 
   @Post('register')
@@ -46,10 +48,15 @@ export class UsersController {
   })
   async authenticateUser(@Res() response: Response, @Body() body: UserDto) {
     const user = await this.userService.findUser(body.username)
-    if (!user) throw new UserNotFoundException()
+    if (!user) {
+      this.logger.warn('User not found')
+      throw new UserNotFoundException()
+    }
 
-    if (!(await argon2.verify(user.password, body.password)))
+    if (!(await argon2.verify(user.password, body.password))) {
+      this.logger.warn('Invalid credentials')
       throw new InvalidCredentialsException()
+    }
 
     const payload = { username: user.username, sub: user.uuid }
     const token = await this.jwtService.signAsync(payload)

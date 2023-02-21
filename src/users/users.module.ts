@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { ConsoleLogger } from '@nestjs/common/services'
 import { JwtModule } from '@nestjs/jwt'
 import { AppService } from 'src/app.service'
 import { JWT_SECRET } from 'src/config'
@@ -17,6 +18,12 @@ import { UsersService } from './users.service'
     }),
   ],
   controllers: [UsersController],
-  providers: [UsersService, AppService, PrismaService, JwtStrategy],
+  providers: [
+    UsersService,
+    AppService,
+    PrismaService,
+    JwtStrategy,
+    ConsoleLogger,
+  ],
 })
 export class UsersModule {}

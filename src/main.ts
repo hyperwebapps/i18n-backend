@@ -21,6 +21,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe())
   app.useGlobalFilters(new HttpExceptionFilter())
   app.enableVersioning({ type: VersioningType.URI })
+  app.enableCors({ origin: 'http://192.168.10.133:3000' })
   app.use(helmet())
 
   const document = SwaggerModule.createDocument(app, config)

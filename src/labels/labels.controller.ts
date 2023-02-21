@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common'
+import { ConsoleLogger, Controller, Post } from '@nestjs/common'
 import { Body, Delete, Get, Param, Put, Res } from '@nestjs/common/decorators'
 import { ApiBearerAuth } from '@nestjs/swagger'
 import { plainToInstance } from 'class-transformer'
@@ -22,16 +22,23 @@ export class LabelsController {
   constructor(
     private labelsService: LabelsService,
     private appService: AppService,
-    private folderService: FoldersService
+    private folderService: FoldersService,
+    private logger: ConsoleLogger
   ) {}
 
   @Post()
   async create(@Res() response: Response, @Body() body: CreateLabelDto) {
     const folder = await this.folderService.findFolder(body.folder)
-    if (!folder) throw new FolderNotFoundException()
+    if (!folder) {
+      this.logger.warn('Folder not found')
+      throw new FolderNotFoundException()
+    }
 
     const labelCheck = await this.labelsService.findLabelByName(body.name)
-    if (labelCheck) throw new LabelAlreadyPresentException()
+    if (labelCheck) {
+      this.logger.warn('Label already present')
+      throw new LabelAlreadyPresentException()
+    }
 
     const label = await this.labelsService.create(body, folder.id)
     return this.appService.okLabelCreated(response, label.uuid)
@@ -49,7 +56,10 @@ export class LabelsController {
   @Get(':id')
   async findLabel(@Param('id') id: string) {
     const label = await this.labelsService.findLabel(id)
-    if (!label) throw new LabelNotFoundException()
+    if (!label) {
+      this.logger.warn('Label not found')
+      throw new LabelNotFoundException()
+    }
 
     const convertedLabel = plainToInstance(LabelDto, label)
 
@@ -63,10 +73,16 @@ export class LabelsController {
     @Body() body: UpdateLabelDto
   ) {
     const labelExists = await this.labelsService.findLabel(id)
-    if (!labelExists) throw new LabelNotFoundException()
+    if (!labelExists) {
+      this.logger.warn('Label not found')
+      throw new LabelNotFoundException()
+    }
 
     const labelNameCheck = await this.labelsService.findLabelByName(body.name)
-    if (labelNameCheck) throw new LabelAlreadyPresentException()
+    if (labelNameCheck) {
+      this.logger.warn('Label already present')
+      throw new LabelAlreadyPresentException()
+    }
 
     await this.labelsService.update(id, body)
 
@@ -76,7 +92,10 @@ export class LabelsController {
   @Delete(':id')
   async delete(@Res() response: Response, @Param('id') id: string) {
     const labelCheck = await this.labelsService.findLabel(id)
-    if (!labelCheck) throw new LabelNotFoundException()
+    if (!labelCheck) {
+      this.logger.warn('Label not found')
+      throw new LabelNotFoundException()
+    }
 
     await this.labelsService.delete(id)
 

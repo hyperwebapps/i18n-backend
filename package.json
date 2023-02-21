@@ -1,6 +1,6 @@
 {
   "name": "i18n-backend",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "i18n rest api",
   "author": "VinceCommerce",
   "private": true,
@@ -21,7 +21,11 @@
     "psm:init": "npx prisma init",
     "psm:pull": "npx prisma db pull",
     "psm:generate": "npx prisma generate",
+    "psm:migrate": "npx prisma migrate deploy",
     "nest:generate": "nest g mo --no-spec && nest g s --no-spec && nest g co --no-spec"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma"
   },
   "dependencies": {
     "@nestjs/common": "^9.3.8",
